@@ -20,6 +20,38 @@ html,body{
 		height:100%;
 		overflow: hidden;
 		background-color:#ddd;
+
+		@at-root{
+			.img-figure{
+				position:absolute;
+				width:280px;
+				height:320px;
+				margin:0px;
+				padding:40px;
+				box-sizing:border-box;
+				background-color:#fff;
+
+				transform-style: preserve-3d;
+
+				&.is-inverse{
+					transform:rotateY(180deg);
+				}
+
+				img{
+					width:200px;
+					height:200px;
+				}
+			}
+			figcaption{
+				text-align: center;
+
+				.img-title{
+					color:#a7a0a2;
+					margin:20px 0px 0px;
+					font-size: 16px;
+				}
+			}
+		}
 	}
 
 	/* 导航栏 */
