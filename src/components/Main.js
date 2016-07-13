@@ -35,7 +35,7 @@ function getRangeRandom(low,high){
 *  获取一个0-30的正负角度
 */
 function getDegRandom(){
-	return (Math.random() > 0.5 ? " ":"-") + Math.random() * 30;
+	return (Math.random() > 0.5 ? ' ':'-') + Math.random() * 30;
 }
 
 
@@ -64,17 +64,17 @@ class ImgFigure extends React.Component{
 		}
 		// 如果照片的旋转角度有值且不为0，添加旋转角度
 		if(this.props.arrange.rotate){
-			// (['-moz-','-webkit-','-ms-','']).forEach((value)=>{
-				styleObj['transform'] = "rotate("+this.props.arrange.rotate+"deg)";
-			// })
+			(['MozTransform','WebkitTransform','msTransfrom','transform']).forEach((value)=>{
+				styleObj[value] = 'rotate('+this.props.arrange.rotate+'deg)';
+			})
 		}
 
 		if(this.props.arrange.isCenter){
 			styleObj.zIndex = 11
 		}
 
-		let imgFigureClassName = "img-figure";
-		imgFigureClassName += this.props.arrange.isInverse ? " is-inverse" : " ";
+		let imgFigureClassName = 'img-figure';
+		imgFigureClassName += this.props.arrange.isInverse ? ' is-inverse' : ' ';
 		return(
 			<figure className={imgFigureClassName} style={styleObj} onClick={this.handleClick}>
 				<img src={this.props.data.url}
@@ -89,6 +89,37 @@ class ImgFigure extends React.Component{
 					</div>
 				</figcaption>
 			</figure>
+		)
+	}
+}
+
+// 控制导航栏组件
+class ControllersUnit extends React.Component{
+	handleClick=(e)=>{
+		// 如果当前为居中，则翻转，否则居中
+		if(this.props.arrange.isCenter){
+			this.props.inverse()
+		}else{
+			this.props.center()
+		}
+
+		e.stopPropagation();
+		e.preventDefault();
+	}
+	render(){
+		let controllerUnitClassName = 'controller-unit';
+
+		// 判断对应图片是否居中，翻转，并修改相应的类名
+		if(this.props.arrange.isCenter){
+			controllerUnitClassName +=' is-center';
+
+			if(this.props.arrange.isInverse){
+				controllerUnitClassName += ' is-inverse';
+			}
+		}
+
+		return(
+			<span className={controllerUnitClassName} onClick={this.handleClick}></span>
 		)
 	}
 }
@@ -159,7 +190,7 @@ class AppComponent extends React.Component {
 				vPosRangeTopY = vPosRange.topY,
 				vPosRangeX = vPosRange.x,
 				imgsArrangeTopArr = [],
-				topImgNum = Math.round(Math.random() * 2), // 上侧图片有0-2个
+				topImgNum = Math.floor(Math.random() * 2), // 上侧图片有0-2个
 
 				topImgSpliceIndex = 0,//用来标记放在上部的图片是数组中的哪个
 
@@ -211,6 +242,7 @@ class AppComponent extends React.Component {
 			}
 		}
 
+		// debugger;
 
 		// 把之前取出的上侧图片塞回去
 		if(imgsArrangeTopArr && imgsArrangeTopArr[0]){
@@ -228,7 +260,7 @@ class AppComponent extends React.Component {
 	}
 
 	/*
-	* 居中图片 
+	* 居中图片
 	* @param 输入图片的index
 	* @return {function}
 	*/
@@ -280,7 +312,7 @@ class AppComponent extends React.Component {
 
   render() {
 
-  	let controllersUnits=[],
+  	let ControllersUnits=[],
   			ImgFigures=[];
 
   	imageDatas.forEach((value,index)=>{
@@ -297,10 +329,20 @@ class AppComponent extends React.Component {
   		}
 
   		ImgFigures.push(
-  			<ImgFigure 
+  			<ImgFigure
   				data={value}
   				ref={'imgFigure'+index}
+  				key={index}
 	  			arrange={this.state.imgsArrangeArr[index]}
+	  			inverse={this.inverse(index)}
+	  			center={this.center(index)}
+	  			/>
+  			)
+
+  		ControllersUnits.push(
+  			<ControllersUnit
+	  			key={index}
+  				arrange={this.state.imgsArrangeArr[index]}
 	  			inverse={this.inverse(index)}
 	  			center={this.center(index)}
 	  			/>
@@ -313,8 +355,8 @@ class AppComponent extends React.Component {
       		{ImgFigures}
       	</section>
 
-      	<nav className="contriller-nav">
-      		
+      	<nav className="controller-nav">
+      		{ControllersUnits}
       	</nav>
       </section>
     );
